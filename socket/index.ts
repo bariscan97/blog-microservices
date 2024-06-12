@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Hello World!');
 });
-const PORT = process.env.PORT || 80001
+const PORT = process.env.PORT || 8006
 const io = new Server(server, {
   cors: {
     origin: '*', 
@@ -37,7 +37,7 @@ io.on('connection', async(socket) => {
   
   const {name} = socket.data.user
   
-  const unreadCount = await axios.get(`http://localhost:8082/${name}?count=true`)
+  const unreadCount = await axios.get(`http://localhost:8008/${name}?count=true`)
   .then((response) => {
     io.to(socket.id).emit("private",response.data)
   }).catch((error) => {
