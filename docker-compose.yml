@@ -1,0 +1,190 @@
+version: "3.8"
+
+services:
+  redis:
+        image: 'redis:alpine'
+        restart: always
+        ports:
+          - '6379:6379'
+        networks:
+          - app-network
+  nosql-db:
+    image: mvertes/alpine-mongo
+    ports:
+      - "27018:27017"
+    container_name: nosql-db
+    volumes:
+      - ./db/:/data/db
+    networks:
+      - app-network
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'
+    networks:
+      - app-network
+  
+  postgres-db:
+    container_name: mypostgres3
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: my_database
+      POSTGRES_USER: postgres
+    networks:
+      - app-network
+    
+  users:
+    build:
+      dockerfile: Dockerfile
+      context: ./users
+    container_name: users
+    ports:
+      - "8000:8000"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app
+      - /app/users/node_modules
+
+    env_file:
+      - ./users/.env
+    networks:
+      - app-network
+  
+  posts:
+    build:
+      dockerfile: Dockerfile
+      context: ./posts
+    container_name: posts
+    ports:
+      - "8001:8001"
+    restart: always
+    depends_on:
+      - "postgres-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app
+      - /app/posts/node_modules
+    env_file:
+      - ./posts/.env
+    networks:
+      - app-network
+  
+  notification:
+    build:
+      dockerfile: Dockerfile
+      context: ./notification
+    container_name: notification
+    ports:
+      - "8008:8008"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app/
+      - /app/notification/node_modules
+    env_file:
+      - ./notification/.env
+    networks:
+      - app-network
+  
+  gateway:
+    build:
+      dockerfile: Dockerfile
+      context: ./gateway
+    container_name: gateway
+    ports:
+      - "8004:8004"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+      - "redis"
+    volumes:
+      - .:/app/
+      - /app/gateway/node_modules
+    env_file:
+      - ./gateway/.env
+    networks:
+      - app-network
+  
+  auth:
+    build:
+      dockerfile: Dockerfile
+      context: ./auth
+    container_name: auth
+    ports:
+      - "8005:8005"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app/
+      - /app/auth/node_modules
+    env_file:
+      - ./auth/.env
+    networks:
+      - app-network
+
+  socket:
+    build:
+      dockerfile: Dockerfile
+      context: ./socket
+    container_name: socket
+    ports:
+      - "8006:8006"
+    restart: always
+    depends_on:
+      - "redis"
+    volumes:
+      - .:/app/
+      - /app/socket/node_modules
+    env_file:
+      - ./socket/.env
+    networks:
+      - app-network
+  
+  mail-worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./mail-worker
+    container_name: mail-worker
+    ports:
+      - "8010:8010"
+    restart: always
+    
+    depends_on:
+      - "rabbitmq"
+   
+    env_file:
+      - ./mail-worker/.env.dev
+    networks:
+      - app-network
+  
+  upload:
+    build:
+      dockerfile: Dockerfile
+      context: ./upload
+    container_name: upload
+    ports:
+      - "8010:8010"
+    restart: always
+    
+    env_file:
+      - ./upload/.env.dev
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+
