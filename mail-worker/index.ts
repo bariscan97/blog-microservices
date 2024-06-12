@@ -36,7 +36,7 @@ export async function Worker() : Promise<void> {
             
                 emailTemplate=`
                     <h3>register verify</h3>
-                    <p>This <a href='${target}' target='_blank'>link</a>will expire in 1 hour</p>
+                    <p>This <a href='${target}' target='_blank'>link</a>Click</p>
                     `
                 }
             
