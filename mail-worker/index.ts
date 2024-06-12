@@ -35,26 +35,10 @@ export async function Worker() : Promise<void> {
                 target = `http://localhost:${3001}/auth/register-verify?token=${message.token}`;
             
                 emailTemplate=`
-                    <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Email Verification</title>
-                        </head>
-                        <body>
-                            <div style="background-color: #f4f4f4; padding: 20px;">
-                                <h2>Email Verification</h2>
-                                <p>To verify your account, please click the link below:</p>
-                                <a href="${target}">Verify My Account</a>
-                                <p>If the link doesn't work, you can copy and paste the following address into your browser's address bar:</p>
-                                <p>https://www.example.com/verify?token=abcdefg123456</p>
-                                <p>Thank you,<br> Your Website Name</p>
-                            </div>
-                        </body>
-                        </html>
+                    <h3>register verify</h3>
+                    <p>This <a href='${target}' target='_blank'>link</a>will expire in 1 hour</p>
                     `
-            }
+                }
             
             mailSender({
                 to : message.to,

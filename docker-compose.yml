@@ -167,7 +167,7 @@ services:
       - "rabbitmq"
    
     env_file:
-      - ./mail-worker/.env.dev
+      - ./mail-worker/.env
     networks:
       - app-network
   
@@ -181,7 +181,7 @@ services:
     restart: always
     
     env_file:
-      - ./upload/.env.dev
+      - ./upload/.env
     networks:
       - app-network
 networks:
