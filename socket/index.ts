@@ -1,7 +1,7 @@
 import * as http from 'http';
 import { Server } from 'socket.io';
 import jwt from "jsonwebtoken"
-import Users from "./redis/onliceUsers"
+import Users from "./redis/onlineUsers"
 import axios from 'axios';
 import dotenv from "dotenv"
 

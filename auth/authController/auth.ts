@@ -22,13 +22,13 @@ export default class AuthController{
             // let req_email :string  = req.body.email
             // let user_email:string = req_email.substring(0,req_email.lastIndexOf("."))
     
-            const users = (await axios.get(`http://localhost:3000/users/checkUserExists/${req.body.name}`)).data.result
-            console.log(users)
+            const check = (await axios.get(`http://localhost:3000/users/checkUserExists/${req.body.name}`)).data.result
+            console.log(check)
             
-            if (users.length === 0){
+            if (check.length === 0){
                 next(new CustomError("user not exists"))
             }
-            const user = users[0]
+            const user = check[0]
             
             const validated = await bcrypt.compare(req.body.password,user.password)
             if (!validated){
@@ -43,12 +43,16 @@ export default class AuthController{
     public async forgotPasswordVerify(req: Request,res : Response, next : NextFunction){
         try{
             const { resetPasswordToken } = req.query
+            
             const credential = jwt.verify(resetPasswordToken as any ,Local.get("JWT_SECRET_KEY"))
-           
-            const value = await Cahce.getItem(credential["email"])
+            
+            const user_email:string = credential.substring(0,credential.lastIndexOf("."))
+            
+            const token = await Cahce.getItem(credential[user_email])
+            
             const now : Date = new Date(Date.now())
 
-            if(!resetPasswordToken || resetPasswordToken !== credential["expire"] || Number(now) >  Number(credential["expire"])){
+            if(!resetPasswordToken || resetPasswordToken !== token || Number(now) >  Number(credential["expire"])){
                 next(new Error("invalid token"))
             }
            
@@ -79,7 +83,7 @@ export default class AuthController{
             let req_email :string  = req.body.email
             let user_email:string = req_email.substring(0,req_email.lastIndexOf("."))
             
-            const user = (await axios.get(`http://localhost:3000/users/${req.body.name}`)).data.result
+            const user = (await axios.get(`http://localhost:3000/users/checkUserExists/${req.body.name}`)).data.result
             if (user.length === 0){
                 throw new Error("user not exists")
             }
@@ -106,8 +110,13 @@ export default class AuthController{
             const {password , resetPasswordToken} = req.body
             
             const credential = jwt.verify(resetPasswordToken as any ,Local.get("JWT_SECRET_KEY"))
-            const token = await Cahce.getItem(credential["email"])
+           
+            const user_email:string = credential.substring(0,credential.lastIndexOf("."))
+            
+            const token = await Cahce.getItem(credential[user_email])
+            
             const now : Date = new Date(Date.now())
+            
             console.log(credential)
             
 
@@ -120,7 +129,7 @@ export default class AuthController{
             const salt = bcrypt.genSaltSync(10)
             const hashedPassword = await bcrypt.hash(password,salt) 
             
-            await Cahce.removeItem(credential["email"])
+            await Cahce.removeItem(credential[user_email])
             
             await axios.patch(`http://localhost:3000/user}`,hashedPassword,{
                 headers:{
