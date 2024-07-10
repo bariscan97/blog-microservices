@@ -26,8 +26,7 @@ services:
       - app-network
   
   postgres-db:
-    container_name: mypostgres3
-    image: postgres
+    image: postgres:14-alpine
     ports:
       - "5432:5432"
     volumes:
