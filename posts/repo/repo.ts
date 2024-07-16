@@ -32,7 +32,7 @@ export default class Repo{
         for(let i = 0 ;i <keys.length;i++){
              updates += keys[i] + "  =  " + "$" + Number(i+1) + `${i === keys.length-1 ? "  " : " , " }`
          }
-        const query = "UPDATE users SET " + updates + ", updateAt = NOW() " + "WHERE id = $" + `${Number(size + 1)} AND $` + `${Number(size + 2)}`  
+        const query = "UPDATE users SET " + updates + ", updateAt = NOW() " + "WHERE user_id = $" + `${Number(size + 1)} AND id = $` + `${Number(size + 2)}`  
         const result = await this.pool.query(query,[...Object.values(data), me_id , post_id])
         return result.rowCount
     }
