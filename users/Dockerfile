@@ -1,6 +1,6 @@
 FROM node:16-alpine as development
 
-WORKDIR /api/user
+WORKDIR /src/app/user
 
 COPY package*.json .
 
@@ -12,7 +12,7 @@ RUN npm run build
 
 FROM node:16-alpine as production
 
-WORKDIR /usr/src/app
+WORKDIR /src/app/user
 
 COPY package*.json .
 

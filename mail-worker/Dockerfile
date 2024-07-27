@@ -1,15 +1,25 @@
-FROM node:12
+FROM node:16-alpine as development
 
-WORKDIR /app1
+WORKDIR /src/app/mail-worker
 
-COPY package*.json ./
+COPY package*.json .
 
-RUN npm install\
-        && npm install typescript -g
-RUN tsc
+RUN npm install
 
 COPY . .
 
-EXPOSE 3001
+RUN npm run build
 
-CMD ["node", "dist/index.js"] 
+FROM node:16-alpine as production
+
+
+
+WORKDIR /src/app/mail-worker
+
+COPY package*.json .
+
+RUN npm ci --only=production
+
+COPY --from=development /api/gateway/dist ./dist
+
+CMD ["node", "dist/index.js"]

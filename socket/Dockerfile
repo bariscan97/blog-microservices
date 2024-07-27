@@ -1,6 +1,6 @@
 FROM node:16-alpine as development
 
-WORKDIR /api/socket
+WORKDIR /src/app/socket
 
 COPY package*.json .
 
@@ -14,7 +14,7 @@ FROM node:16-alpine as production
 
 
 
-WORKDIR /usr/src/app
+WORKDIR /src/app/socket
 
 COPY package*.json .
 

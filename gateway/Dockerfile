@@ -1,6 +1,6 @@
 FROM node:16-alpine as development
 
-WORKDIR /api/gateway
+WORKDIR /src/app/gateway
 
 COPY package*.json .
 
@@ -12,10 +12,9 @@ RUN npm run build
 
 FROM node:16-alpine as production
 
-# ARG NODE_ENV=production
-# ENV NODE_ENV=${NODE_ENV}
 
-WORKDIR /api/auth
+
+WORKDIR /src/app/gateway
 
 COPY package*.json .
 

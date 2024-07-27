@@ -50,8 +50,7 @@ services:
       - "postgres-db"
       - "rabbitmq"
     volumes:
-      - .:/app
-      - /app/users/node_modules
+      - .:/src/app/users/node_modules
 
     env_file:
       - ./users/.env
@@ -70,8 +69,7 @@ services:
       - "postgres-db"
       - "rabbitmq"
     volumes:
-      - .:/app
-      - /app/posts/node_modules
+      - .:/src/app/posts/node_modules
     env_file:
       - ./posts/.env
     networks:
@@ -89,8 +87,7 @@ services:
       - "nosql-db"
       - "rabbitmq"
     volumes:
-      - .:/app/
-      - /app/notification/node_modules
+      - .:/src/app/notification/node_modules
     env_file:
       - ./notification/.env
     networks:
@@ -105,8 +102,7 @@ services:
       - "8004:8004"
     restart: always
     volumes:
-      - .:/app/
-      - /app/gateway/node_modules
+      - .:/src/app/gateway/node_modules
     env_file:
       - ./gateway/.env
     networks:
@@ -125,8 +121,7 @@ services:
       - "rabbitmq"
       - "redis"
     volumes:
-      - .:/app/
-      - /app/auth/node_modules
+      - .:/src/app/auth/node_modules 
     env_file:
       - ./auth/.env
     networks:
@@ -143,8 +138,7 @@ services:
     depends_on:
       - "redis"
     volumes:
-      - .:/app/
-      - /app/socket/node_modules
+      - .:/src/app/socket/node_modules 
     env_file:
       - ./socket/.env
     networks:
@@ -161,7 +155,8 @@ services:
     
     depends_on:
       - "rabbitmq"
-   
+    volumes:
+      - .:/src/app/mail-worker/node_modules 
     env_file:
       - ./mail-worker/.env
     networks:
@@ -178,6 +173,8 @@ services:
     
     env_file:
       - ./upload/.env
+    volumes:
+      - .:/src/app/upload/node_modules 
     networks:
       - app-network
 networks:
