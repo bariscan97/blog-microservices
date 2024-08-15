@@ -89,7 +89,7 @@ export default class Repo{
             ON p.user_id = r.related  ` : ""}
             WHERE p.parent_id = $1 ${me_id ? ` AND r.related is NULL`:""}
             LIMIT 15 
-            OFF SET $2 * 15
+            OFFSET $2 * 15
           `
         const result = await this.pool.query(query,parameters)        
         return result.rows
@@ -156,7 +156,7 @@ export default class Repo{
             ${me_id || category ? "WHERE ": ""} ${addFilter} ${me_id && category ? " AND ":" "} ${me_id ? ` r.related is NULL`:""}
             ORDER BY p.createAt ,p.like_cnt
             LIMIT 15 
-            OFF SET $2 * 15
+            OFFSET $2 * 15
         `
         const result = await this.pool.query(query,parameters)        
         return result.rows
